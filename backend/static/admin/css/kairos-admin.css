@@ -1,0 +1,130 @@
+/* ============================================================
+   Admin Multi-Column Form Layout
+   Groups admin fields in rows of up to 3 columns.
+   ============================================================ */
+
+/* --- Fieldsets: each one becomes a row --- */
+fieldset.module {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 20px;
+    padding: 15px 20px 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-bottom: 15px;
+    background: #fff;
+}
+
+/* The fieldset heading (legend) spans the full row */
+fieldset.module > h2 {
+    width: 100%;
+    flex: 0 0 100%;
+    font-size: 13px;
+    font-weight: 600;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 0 0 10px 0;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #eee;
+}
+
+/* Each form-row inside the fieldset becomes a flex row */
+fieldset.module .form-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 20px;
+    padding: 0;
+    margin: 0;
+    border: none;
+    float: none;
+}
+
+/* Each field container takes 1 column (of 3) */
+fieldset.module .form-row > div {
+    flex: 1 1 calc(33.333% - 14px);
+    min-width: 200px;
+    padding: 5px 0;
+    margin: 0;
+    float: none;
+}
+
+/* Full-width fields: textareas, HTML fields, and fields marked .full-width */
+fieldset.module .form-row > div textarea,
+fieldset.module .form-row > div .cke,
+fieldset.module .form-row > div.full-width,
+fieldset.module .form-row > div fieldset {
+    flex: 1 1 100%;
+}
+
+/* Readonly fields (metadata like created_at, updated_at) */
+fieldset.module .form-row > div.readonly {
+    flex: 1 1 calc(33.333% - 14px);
+    min-width: 200px;
+}
+
+/* --- Collapse behavior --- */
+fieldset.module.collapse {
+    display: block;
+}
+
+fieldset.module.collapse > h2 {
+    cursor: pointer;
+    user-select: none;
+}
+
+fieldset.module.collapse .form-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 20px;
+}
+
+/* --- Label styling --- */
+fieldset.module label {
+    font-weight: 600;
+    font-size: 12px;
+    color: #333;
+    margin-bottom: 4px;
+    display: block;
+}
+
+/* --- Help text --- */
+fieldset.module .help {
+    font-size: 11px;
+    color: #999;
+    margin-top: 3px;
+}
+
+/* --- Errors --- */
+fieldset.module .errorlist {
+    margin: 2px 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+fieldset.module .errorlist li {
+    font-size: 11px;
+    color: #ba2121;
+}
+
+fieldset.module .form-row > div.has-error input,
+fieldset.module .form-row > div.has-error select,
+fieldset.module .form-row > div.has-error textarea {
+    border-color: #ba2121;
+}
+
+/* --- Responsive: 2 columns on medium screens --- */
+@media (max-width: 1024px) {
+    fieldset.module .form-row > div {
+        flex: 1 1 calc(50% - 10px);
+        min-width: 180px;
+    }
+}
+
+/* --- Responsive: 1 column on small screens --- */
+@media (max-width: 768px) {
+    fieldset.module .form-row > div {
+        flex: 1 1 100%;
+        min-width: 100%;
+    }
+}

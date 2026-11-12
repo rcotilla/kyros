@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Panel del Operador — KAIROS{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row mb-4">
+        <div class="col">
+            <h1>Panel del Operador</h1>
+            <p class="text-muted">Bienvenido, {{ user.get_full_name|default:user.username }}. Rol: Operador</p>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <h3 style="font-size: 2.5em;">📋</h3>
+                    <h5 class="card-title">Tareas Asignadas</h5>
+                    <p class="card-text">Ver y completar tareas asignadas por los gestores.</p>
+                    <a href="/api/v1/tasks/" class="btn btn-primary">Ver Tareas</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <h3 style="font-size: 2.5em;">📄</h3>
+                    <h5 class="card-title">Documentos</h5>
+                    <p class="card-text">Subir y gestionar documentos de procesos.</p>
+                    <a href="/api/v1/documents/" class="btn btn-primary">Ver Documentos</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

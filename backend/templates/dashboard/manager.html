@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}Panel del Gestor — KAIROS{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row mb-4">
+        <div class="col">
+            <h1>Panel del Gestor</h1>
+            <p class="text-muted">Bienvenido, {{ user.get_full_name|default:user.username }}. Rol: Gestor</p>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <h3 style="font-size: 2.5em;">👥</h3>
+                    <h5 class="card-title">Mis Clientes</h5>
+                    <p class="card-text">Ver y gestionar tus clientes asignados.</p>
+                    <a href="/api/v1/clients/" class="btn btn-primary">Ver Clientes</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <h3 style="font-size: 2.5em;">📋</h3>
+                    <h5 class="card-title">Mis Procesos</h5>
+                    <p class="card-text">Seguimiento de expedientes en trámite.</p>
+                    <a href="/api/v1/processes/" class="btn btn-primary">Ver Procesos</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <h3 style="font-size: 2.5em;">📄</h3>
+                    <h5 class="card-title">Documentos</h5>
+                    <p class="card-text">Acceder y generar documentos y PDFs.</p>
+                    <a href="/api/v1/documents/" class="btn btn-primary">Ver Documentos</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends "panel/base_panel.html" %}
+
+{% block title %}Mi Perfil - KAIROS{% endblock %}
+
+{% block sidebar_menu %}
+    <a class="nav-link" href="{% url 'panel:client_home' %}">
+        <span class="icon">📋</span> Mis Procesos
+    </a>
+    <a class="nav-link active" href="{% url 'panel:client_profile' %}">
+        <span class="icon">👤</span> Mi Perfil
+    </a>
+{% endblock %}
+
+{% block main_content %}
+<div class="page-header">
+    <h1>Mi Perfil</h1>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <table class="table">
+            <tr><th>Nombre</th><td>{{ user.get_full_name|default:"-" }}</td></tr>
+            <tr><th>Email</th><td>{{ user.email }}</td></tr>
+            <tr><th>Teléfono</th><td>{{ user.phone|default:"-" }}</td></tr>
+            <tr><th>Rol</th><td>{{ user.get_role_display }}</td></tr>
+        </table>
+    </div>
+</div>
+{% endblock %}

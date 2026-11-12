@@ -1,0 +1,79 @@
+{% extends "base_panel.html" %}
+
+{% block title %}Subir Documento{% if process %} — {{ process.file_number }}{% endif %} — KAIROS{% endblock %}
+
+{% block sidebar_menu %}
+    <div class="nav-section">Principal</div>
+    <a class="nav-link" href="{% url 'panel:home' %}">
+        <span class="icon">📊</span> Resumen
+    </a>
+
+    <div class="nav-section">Gestión</div>
+    <a class="nav-link" href="{% url 'panel:gestor_clients' %}">
+        <span class="icon">👥</span> Clientes
+    </a>
+    <a class="nav-link {% if process %}active{% endif %}" href="{% url 'panel:gestor_processes' %}">
+        <span class="icon">📋</span> Gestiones
+    </a>
+    <a class="nav-link" href="{% url 'panel:gestor_templates' %}">
+        <span class="icon">📝</span> Procesos
+    </a>
+    <a class="nav-link" href="{% url 'panel:gestor_document_generation' %}">
+        <span class="icon">📄</span> Documentos
+    </a>
+
+    {% if user.is_staff %}
+    <div class="nav-section">Sistema</div>
+    <a class="nav-link" href="{% url 'admin:index' %}">
+        <span class="icon">⚙️</span> Admin Django
+    </a>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Subir Documento</h1>
+    {% if process %}
+    <p class="subtitle">Gestión: <a href="{% url 'panel:gestor_process_detail' pk=process.pk %}">{{ process.file_number }} — {{ process.title }}</a></p>
+    {% endif %}
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            {% for field in form.hidden_fields %}{{ field }}{% endfor %}
+
+            {# ── Documento ── #}
+            <h6 class="form-section-title mt-3">Documento</h6>
+            <div class="row g-3">
+                {% with f=form.title %}{% include "panel/gestor/_field_col.html" %}{% endwith %}
+                {% with f=form.doc_type %}{% include "panel/gestor/_field_col.html" %}{% endwith %}
+            </div>
+
+            {# ── Archivo ── #}
+            <h6 class="form-section-title mt-4">Archivo</h6>
+            <div class="row g-3">
+                {% with f=form.file %}{% include "panel/gestor/_field_col_full.html" %}{% endwith %}
+            </div>
+
+            {# ── Detalles ── #}
+            <h6 class="form-section-title mt-4">Detalles</h6>
+            <div class="row g-3">
+                {% with f=form.description %}{% include "panel/gestor/_field_col_full.html" %}{% endwith %}
+            </div>
+
+            {# ── Actions ── #}
+            <div class="d-flex gap-2 mt-4 pt-3 border-top">
+                <button type="submit" class="btn btn-primary">Subir Documento</button>
+                {% if process %}
+                <a href="{% url 'panel:gestor_process_detail' pk=process.pk %}" class="btn btn-outline-secondary">Cancelar</a>
+                {% else %}
+                <a href="{% url 'panel:gestor_documents' %}" class="btn btn-outline-secondary">Cancelar</a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

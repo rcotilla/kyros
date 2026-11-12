@@ -1,0 +1,88 @@
+{% extends "panel/base_panel.html" %}
+
+{% block title %}Proceso {{ process.file_number }} - KAIROS{% endblock %}
+
+{% block sidebar_menu %}
+    <a class="nav-link active" href="{% url 'panel:client_home' %}">
+        <span class="icon">📋</span> Mis Procesos
+    </a>
+    <a class="nav-link" href="{% url 'panel:client_profile' %}">
+        <span class="icon">👤</span> Mi Perfil
+    </a>
+{% endblock %}
+
+{% block main_content %}
+<div class="page-header">
+    <h1>{{ process.file_number }}</h1>
+    <p class="subtitle">{{ process.title }}</p>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-header">Información del Proceso</div>
+            <div class="card-body">
+                <table class="table">
+                    <tr><th>Tipo</th><td>{{ process.process_type }}</td></tr>
+                    <tr><th>Estado</th><td><span class="badge bg-{% if process.status == 'completed' %}success{% elif process.status == 'in_progress' %}info{% elif process.status == 'pending' %}warning{% else %}secondary{% endif %}">{{ process.get_status_display }}</span></td></tr>
+                    <tr><th>Descripción</th><td>{{ process.description|default:"Sin descripción" }}</td></tr>
+                    <tr><th>Fecha Inicio</th><td>{{ process.start_date|date:"d/m/Y"|default:"-" }}</td></tr>
+                    <tr><th>Fecha Estimada</th><td>{{ process.due_date|date:"d/m/Y"|default:"-" }}</td></tr>
+                </table>
+            </div>
+        </div>
+
+        {% if steps %}
+        <div class="card">
+            <div class="card-header">Avance del Proceso</div>
+            <div class="card-body">
+                <div class="list-group list-group-flush">
+                    {% for step in steps %}
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>{{ step.name }}</strong>
+                            {% if step.description %}
+                            <br><small class="text-muted">{{ step.description }}</small>
+                            {% endif %}
+                        </div>
+                        <span class="badge bg-{% if step.status == 'completed' %}success{% elif step.status == 'in_progress' %}info{% else %}secondary{% endif %}">
+                            {{ step.get_status_display }}
+                        </span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-header">Contacto</div>
+            <div class="card-body">
+                <p><strong>Gestor Asignado:</strong></p>
+                <p>{{ process.gestor.get_full_name|default:"No asignado" }}</p>
+                {% if process.gestor.email %}
+                <p><a href="mailto:{{ process.gestor.email }}">{{ process.gestor.email }}</a></p>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if documents %}
+        <div class="card">
+            <div class="card-header">Documentos</div>
+            <div class="card-body">
+                <ul class="list-unstyled">
+                    {% for doc in documents %}
+                    <li class="mb-2">
+                        <a href="{{ doc.file.url }}" target="_blank">{{ doc.title }}</a>
+                        <br><small class="text-muted">{{ doc.uploaded_at|date:"d/m/Y" }}</small>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

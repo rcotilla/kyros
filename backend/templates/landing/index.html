@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}KAIROS - Inicio{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+{% include "landing/sections/header.html" %}
+
+<!-- Features Section -->
+<section class="py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">Características Principales</h2>
+
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <h3 class="card-title" style="font-size: 2em;">📋</h3>
+                        <h5 class="card-title">Gestión de Procesos</h5>
+                        <p class="card-text">Seguimiento integral de expedientes y trámites con historial completo.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <h3 class="card-title" style="font-size: 2em;">👥</h3>
+                        <h5 class="card-title">Gestión de Clientes</h5>
+                        <p class="card-text">Base de datos centralizada de clientes con información de contacto y documentación.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <h3 class="card-title" style="font-size: 2em;">🔐</h3>
+                        <h5 class="card-title">Control de Acceso</h5>
+                        <p class="card-text">Roles diferenciados (Cliente, Gestor, Administrativo) con permisos granulares.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Info Section -->
+<section class="py-5 bg-light">
+    {% include "landing/sections/about.html" %}
+</section>
+
+<!-- CTA Section -->
+<section class="py-5">
+    <div class="container text-center">
+        <h2 class="mb-4">¿Listo para comenzar?</h2>
+        <p class="lead mb-4">Accede al sistema para gestionar tus documentos y procesos de manera eficiente.</p>
+        <a href="{% url 'admin:index' %}" class="btn btn-primary btn-lg">Acceder Ahora</a>
+    </div>
+</section>
+
+<!-- Contact Section -->
+ <section class="py-5 bg-light">
+    {% include "landing/sections/contact.html" %}
+</section>
+{% endblock %}

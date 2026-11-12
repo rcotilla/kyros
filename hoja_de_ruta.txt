@@ -1,0 +1,89 @@
+Tiene mucho sentido maximizar el uso de **Python en todo el stack**.
+Al usar Python tanto en el backend como en el frontend, reduces drásticamente el
+cambio de contexto, reutilizas modelos de datos/validaciones (como `Pydantic` o
+datos de ORM) y mantienes todo en una sola sintaxis limpia.
+
+Para un proyecto que empieza como una **página web de presentación/landing** y
+luego escala a un **portal interno multirrol con flujos complejos** (PDFs, ficheros, alertas, permisos),
+Flet es una excelente opción para la fase de app/dashboard,
+pero conviene estructurar bien las herramientas desde el primer día.
+
+---
+
+## 1. Propuesta de Stack Tecnológico (Python Full-Stack)
+
+### Backend: ¿Django o Flask?
+
+* **Recomendación: Django + Django REST Framework (o Django Ninja)**
+* **Por qué:** Vas a necesitar gestión de roles (cliente, gestor, operador/resolvedor), autenticación segura, administración de archivos por usuario y permisos granulares. Django ya incluye todo esto de fábrica (sistema de usuarios, grupos, permisos, panel de administración `/admin` perfecto para prototipar rápido y ORM robusto).
+* *Flask* requeriría ensamblar 10-15 librerías independientes (`Flask-SQLAlchemy`, `Flask-Migrate`, `Flask-Login`, etc.), lo que añade trabajo de fontanería innecesario para un sistema de roles y archivos.
+
+
+
+### Frontend y Presentación: Flet vs. Alternativas
+
+* **Etapa 1 (Página de presentación / Landing):**
+* Para la landing pública (SEO, carga ultrarrápida, diseño web tradicional), una app estilo Flutter/Flet puede resultar pesada de cargar inicialmente.
+* **Estrategia recomendada:** Usa **Django Templates + Tailwind CSS** para las páginas públicas/landing (o un renderizado básico SSR).
+
+
+* **Etapa 2 (Panel privado, gestión de ficheros, roles y alertas):**
+* **Flet (Python + Flutter):** Es la herramienta estrella para construir el dashboard/portal interactivo. Te permite escribir interfaces de usuario ricas y reactivas directamente en Python, aprovechando componentes nativos multiplataforma (Web, Desktop, Mobile).
+* **Alternativa a evaluar (Reflect / Reflex):** Si quieres que todo (incluida la landing) sea 100% Python y genere HTML/JS nativo para la web, **Reflex** (antes Pynecone) es una alternativa muy fuerte a Flet para aplicaciones web puras. Sin embargo, Flet sigue siendo superior si en el futuro quieres publicar la app en Android/iOS/Desktop desde la misma base de código.
+
+
+
+---
+
+## 2. Ecosistema de Herramientas Python para las Funcionalidades
+
+| Funcionalidad | Herramienta Python Recomendada | Descripción / Por qué |
+| --- | --- | --- |
+| **Generación de PDFs** | **WeasyPrint** | Permite diseñar los informes/PDFs usando HTML + CSS y convertirlos a PDF con calidad de imprenta. Es la herramienta estándar moderna en Python. |
+| **Alertas y Notificaciones** | **Celery + Redis** | Para envío de emails asíncronos, alertas programadas o procesamiento pesado sin congelar la app. |
+| **Alertas en tiempo real** | **Django Channels / WebSockets** | Notificaciones push e instantáneas en el panel cuando un gestor asigna una tarea a un "resolvedor". |
+| **Gestión de Ficheros** | **django-storages** | Almacenamiento seguro de archivos subidos por clientes/gestores (local en desarrollo, AWS S3 / MinIO en producción). |
+| **Definición de Roles** | **django-guardian** | Otorga permisos a nivel de objeto (ej: el *Cliente A* solo puede ver el *Fichero X*, mientras que el *Gestor B* puede ver todos). |
+
+---
+
+## 3. Nomenclatura sugerida para los Roles
+
+Para el rol que ejecute o resuelva las tareas, algunas de las denominaciones más profesionales utilizadas en plataformas SaaS/B2B son:
+
+1. **Operador / Specialist:** Ideal si se dedica a procesar o ejecutar técnicamente las solicitudes.
+2. **Agente / Agent:** Muy común en sistemas de tickets y soporte.
+3. **Técnico / Escribano / Resolutor (Resolver):** Claro y directo si su función es dar resolución lógica o técnica al caso.
+4. **Asignado / Executor:** Enfocado en cumplimiento de flujos de trabajo (*workflows*).
+
+**Ejemplo de flujo de roles:**
+
+* **Cliente:** Crea solicitudes, sube documentación original y descarga PDFs resueltos.
+* **Gestor (Manager / Supervisor):** Revisa solicitudes entrantes, las valida y las asigna al Operador.
+* **Operador (Resolutor):** Procesa el trabajo, sube los archivos resultantes y marca el estado como completado.
+
+---
+
+## 4. Hoja de Ruta Sugerida por Etapas
+
+### Fase 1: MVP de Presentación y Estructura Base
+
+1. Crear el proyecto **Django** central.
+2. Configurar la página de presentación web (landing page) pública.
+3. Modelar en Django la base de datos: `User`, `Role`, `Document`, `Task/Ticket`.
+4. Habilitar Django Admin para la gestión inicial de datos.
+
+### Fase 2: Portal Integrado (Flet) y Sistema de Roles
+
+1. Integrar **Flet** para la interfaz privada de los usuarios.
+2. Crear pantalla de **Login/Registro** en Flet consumiendo la autenticación de Django.
+3. Implementar vistas diferenciadas según el rol:
+* **Vista Cliente:** Mi espacio, subir ficheros, ver estado de mi trámite.
+* **Vista Gestor:** Bandeja de entrada general, asignación de tareas a Operadores.
+* **Vista Operador:** Mis tareas pendientes, subida de documentos procesados.
+
+### Fase 3: Automatización (PDFs, Ficheros y Alertas)
+
+1. Plantillas HTML para informes y generación con **WeasyPrint**.
+2. Almacenamiento estructurado de archivos (con validaciones de extensión y tamaño).
+3. Sistema de alertas (emails automáticos y notificaciones internas al cambiar de estado un expediente).

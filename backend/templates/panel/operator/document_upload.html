@@ -1,0 +1,29 @@
+{% extends "panel/base_panel.html" %}
+
+{% block title %}Subir Documento{% endblock %}
+
+{% block sidebar_menu %}
+    <a class="nav-link" href="{% url 'panel:operator_home' %}">
+        <span class="icon">📊</span> Mis Tareas
+    </a>
+    <a class="nav-link active" href="{% url 'panel:operator_document_upload' %}">
+        <span class="icon">📄</span> Subir Documento
+    </a>
+{% endblock %}
+
+{% block main_content %}
+<div class="page-header">
+    <h1>Subir Documento</h1>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary">Subir</button>
+            <a href="{% url 'panel:operator_home' %}" class="btn btn-secondary">Cancelar</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,118 @@
+{% extends "base_panel.html" %}
+
+{% block title %}{{ title }} — KAIROS{% endblock %}
+
+{% block sidebar_menu %}
+    <div class="nav-section">Principal</div>
+    <a class="nav-link" href="{% url 'panel:home' %}">
+        <span class="icon">📊</span> Resumen
+    </a>
+
+    <div class="nav-section">Gestión</div>
+    <a class="nav-link active" href="{% url 'panel:gestor_clients' %}">
+        <span class="icon">👥</span> Clientes
+    </a>
+    <a class="nav-link" href="{% url 'panel:gestor_processes' %}">
+        <span class="icon">📋</span> Gestiones
+    </a>
+    <a class="nav-link" href="{% url 'panel:gestor_templates' %}">
+        <span class="icon">📝</span> Procesos
+    </a>
+    <a class="nav-link" href="{% url 'panel:gestor_document_generation' %}">
+        <span class="icon">📄</span> Documentos
+    </a>
+
+    {% if user.is_staff %}
+    <div class="nav-section">Sistema</div>
+    <a class="nav-link" href="{% url 'admin:index' %}">
+        <span class="icon">⚙️</span> Admin Django
+    </a>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>{{ title }}</h1>
+    {% if client %}
+    <p class="subtitle">Editando cliente existente</p>
+    {% endif %}
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+
+            {% for field in form.hidden_fields %}
+                {{ field }}
+            {% endfor %}
+
+            {# ── Datos Personales ── #}
+            <h6 class="form-section-title mt-3">Datos Personales</h6>
+            <div class="row g-3">
+                {% with f=form.first_name %}{% include "panel/gestor/_field_col.html" %}{% endwith %}
+                {% with f=form.last_name %}{% include "panel/gestor/_field_col.html" %}{% endwith %}
+                {% with f=form.birth_date %}{% include "panel/gestor/_field_col.html" %}{% endwith %}
+            </div>
+
+            {# ── Identificación ── #}
+            <h6 class="form-section-title mt-4">Identificación</h6>
+            <div class="row g-3">
+                {% with f=form.document_type %}{% include "panel/gestor/_field_col.html" %}{% endwith %}
+                {% with f=form.document_number %}{% include "panel/gestor/_field_col.html" %}{% endwith %}
+                {% with f=form.document_issuing_country %}{% include "panel/gestor/_field_col.html" %}{% endwith %}
+            </div>
+
+            {# ── Contacto ── #}
+            <h6 class="form-section-title mt-4">Contacto</h6>
+            <div class="row g-3">
+                {% with f=form.email %}{% include "panel/gestor/_field_col.html" %}{% endwith %}
+                {% with f=form.phone %}{% include "panel/gestor/_field_col.html" %}{% endwith %}
+                {% with f=form.phone_secondary %}{% include "panel/gestor/_field_col.html" %}{% endwith %}
+            </div>
+
+            {# ── Datos Adicionales ── #}
+            <h6 class="form-section-title mt-4">Datos Adicionales</h6>
+            <div class="row g-3">
+                {% with f=form.nationality %}{% include "panel/gestor/_field_col.html" %}{% endwith %}
+            </div>
+
+            {# ── Domicilio ── #}
+            <h6 class="form-section-title mt-4">Domicilio</h6>
+            <div class="row g-3">
+                {% with f=form.address %}{% include "panel/gestor/_field_col_full.html" %}{% endwith %}
+            </div>
+            <div class="row g-3 mt-0">
+                {% with f=form.city %}{% include "panel/gestor/_field_col.html" %}{% endwith %}
+                {% with f=form.province %}{% include "panel/gestor/_field_col.html" %}{% endwith %}
+                {% with f=form.postal_code %}{% include "panel/gestor/_field_col.html" %}{% endwith %}
+            </div>
+            <div class="row g-3 mt-0">
+                {% with f=form.country %}{% include "panel/gestor/_field_col.html" %}{% endwith %}
+            </div>
+
+            {# ── Notas ── #}
+            <h6 class="form-section-title mt-4">Notas</h6>
+            <div class="row g-3">
+                {% with f=form.notes %}{% include "panel/gestor/_field_col_full.html" %}{% endwith %}
+            </div>
+
+            {# ── Actions ── #}
+            <div class="d-flex gap-2 mt-4 pt-3 border-top">
+                <button type="submit" class="btn btn-primary">
+                    {% if client %}Guardar Cambios{% else %}Crear Cliente{% endif %}
+                </button>
+                <a href="{% url 'panel:gestor_clients' %}" class="btn btn-outline-secondary">Cancelar</a>
+                {% if client %}
+                <button type="submit" name="action" value="deactivate" class="btn btn-outline-danger ms-auto"
+                        onclick="return confirm('¿Desactivar este cliente? No aparecerá en el panel.')">
+                    Desactivar Cliente
+                </button>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}{% endblock %}

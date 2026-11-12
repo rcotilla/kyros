@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Mi Panel — KAIROS{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row mb-4">
+        <div class="col">
+            <h1>Mi Panel</h1>
+            <p class="text-muted">Bienvenido, {{ user.get_full_name|default:user.username }}</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Sin perfil asignado</h5>
+                    <p class="card-text">
+                        Tu cuenta no tiene un perfil configurado.
+                        Contactá al administrador para que te asigne un rol.
+                    </p>
+                    <a href="{% url 'landing:home' %}" class="btn btn-primary">Volver al Inicio</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

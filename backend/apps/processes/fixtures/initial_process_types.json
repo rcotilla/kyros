@@ -1,0 +1,67 @@
+[
+  {
+    "model": "processes.processtype",
+    "pk": 1,
+    "fields": {
+      "name": "Extranjería",
+      "category": "extranjeria",
+      "description": "Trámites de residencia, nacionalidad y permisos de trabajo",
+      "estimated_days": 90,
+      "is_active": true,
+      "created_at": "2025-01-01T00:00:00Z",
+      "updated_at": "2025-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "processes.processtype",
+    "pk": 2,
+    "fields": {
+      "name": "Marcas y Patentes",
+      "category": "marcas",
+      "description": "Registro de marcas, patentes y propiedad intelectual",
+      "estimated_days": 180,
+      "is_active": true,
+      "created_at": "2025-01-01T00:00:00Z",
+      "updated_at": "2025-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "processes.processtype",
+    "pk": 3,
+    "fields": {
+      "name": "Constituciones",
+      "category": "constituciones",
+      "description": "Constitución de empresas, modificaciones estatutarias",
+      "estimated_days": 30,
+      "is_active": true,
+      "created_at": "2025-01-01T00:00:00Z",
+      "updated_at": "2025-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "processes.processtype",
+    "pk": 4,
+    "fields": {
+      "name": "Contabilidad",
+      "category": "contabilidad",
+      "description": "Servicios contables, impuestos y declaraciones",
+      "estimated_days": 30,
+      "is_active": true,
+      "created_at": "2025-01-01T00:00:00Z",
+      "updated_at": "2025-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "processes.processtype",
+    "pk": 5,
+    "fields": {
+      "name": "Asesoría Legal",
+      "category": "legal",
+      "description": "Consultas legales, contratos y documentación",
+      "estimated_days": 15,
+      "is_active": true,
+      "created_at": "2025-01-01T00:00:00Z",
+      "updated_at": "2025-01-01T00:00:00Z"
+    }
+  }
+]

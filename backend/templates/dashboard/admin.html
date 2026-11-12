@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}Panel de Administración — KAIROS{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row mb-4">
+        <div class="col">
+            <h1>Panel de Administración</h1>
+            <p class="text-muted">Bienvenido, {{ user.get_full_name|default:user.username }}. Rol: Administrador</p>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card h-100 border-primary">
+                <div class="card-body text-center">
+                    <h3 style="font-size: 2.5em;">👥</h3>
+                    <h5 class="card-title">Clientes</h5>
+                    <p class="card-text">Gestionar la base de datos de clientes de la gestoría.</p>
+                    <a href="/api/v1/clients/" class="btn btn-outline-primary">Ver Clientes</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100 border-primary">
+                <div class="card-body text-center">
+                    <h3 style="font-size: 2.5em;">📋</h3>
+                    <h5 class="card-title">Procesos</h5>
+                    <p class="card-text">Administrar expedientes y seguimiento de trámites.</p>
+                    <a href="/api/v1/processes/" class="btn btn-outline-primary">Ver Procesos</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100 border-primary">
+                <div class="card-body text-center">
+                    <h3 style="font-size: 2.5em;">📄</h3>
+                    <h5 class="card-title">Documentos</h5>
+                    <p class="card-text">Administrar documentos y generación de PDFs.</p>
+                    <a href="/api/v1/documents/" class="btn btn-outline-primary">Ver Documentos</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100 border-primary">
+                <div class="card-body text-center">
+                    <h3 style="font-size: 2.5em;">⚙️</h3>
+                    <h5 class="card-title">Configuración</h5>
+                    <p class="card-text">Configurar tipos de proceso, roles y sistema.</p>
+                    <a href="{% url 'admin:index' %}" class="btn btn-outline-primary">Admin Django</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

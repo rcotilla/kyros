@@ -1,0 +1,119 @@
+{% extends "base_panel.html" %}
+
+{% block title %}Panel — KAIROS{% endblock %}
+
+{% block sidebar_menu %}
+    <div class="nav-section">Principal</div>
+    <a class="nav-link active" href="{% url 'panel:home' %}">
+        <span class="icon">📊</span> Resumen
+    </a>
+
+    <div class="nav-section">Gestión</div>
+    <a class="nav-link" href="{% url 'panel:gestor_clients' %}">
+        <span class="icon">👥</span> Clientes
+    </a>
+    <a class="nav-link" href="{% url 'panel:gestor_processes' %}">
+        <span class="icon">📋</span> Gestiones
+    </a>
+    <a class="nav-link" href="{% url 'panel:gestor_templates' %}">
+        <span class="icon">📝</span> Procesos
+    </a>
+    <a class="nav-link" href="{% url 'panel:gestor_document_generation' %}">
+        <span class="icon">📄</span> Documentos
+    </a>
+
+    {% if user.is_staff %}
+    <div class="nav-section">Sistema</div>
+    <a class="nav-link" href="{% url 'admin:index' %}">
+        <span class="icon">⚙️</span> Admin Django
+    </a>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Panel de Gestión</h1>
+    <p class="subtitle">Resumen general de la actividad</p>
+</div>
+
+<!-- Stats Cards -->
+<div class="row g-4 mb-4">
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body text-center">
+                <h2 class="text-primary mb-1">{{ total_clients }}</h2>
+                <small class="text-muted">Clientes Totales</small><br>
+                <small class="text-success">{{ active_clients }} activos</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body text-center">
+                <h2 class="text-primary mb-1">{{ total_processes }}</h2>
+                <small class="text-muted">Gestiones Totales</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body text-center">
+                <h2 class="text-warning mb-1">{{ processes_by_status.in_progress|default:0 }}</h2>
+                <small class="text-muted">En Trámite</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body text-center">
+                <h2 class="text-success mb-1">{{ processes_by_status.completed|default:0 }}</h2>
+                <small class="text-muted">Completados</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row g-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span>Accesos Rápidos</span>
+            </div>
+            <div class="card-body">
+                <a href="{% url 'panel:gestor_client_create' %}" class="btn btn-outline-primary me-2 mb-2">
+                    + Nuevo Cliente
+                </a>
+                <a href="{% url 'panel:gestor_process_create' %}" class="btn btn-outline-primary me-2 mb-2">
+                    + Nueva Gestión
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">Últimas Gestiones</div>
+            <div class="card-body">
+                {% if recent_processes %}
+                <div class="list-group list-group-flush">
+                    {% for p in recent_processes %}
+                    <a href="{% url 'panel:gestor_process_detail' pk=p.pk %}"
+                       class="list-group-item list-group-item-action d-flex justify-content-between">
+                        <span>
+                            <strong>{{ p.file_number }}</strong> — {{ p.title|truncatechars:30 }}
+                        </span>
+                        <span class="badge bg-{% if p.status == 'completed' %}success{% elif p.status == 'in_progress' %}warning{% else %}secondary{% endif %} badge-status">
+                            {{ p.get_status_display }}
+                        </span>
+                    </a>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="text-muted mb-0">No hay procesos aún.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

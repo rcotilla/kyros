@@ -1,0 +1,98 @@
+{% extends "pdf/base.html" %}
+
+{% block pdf_title %}Cliente {{ client.document_number }} — KAIROS{% endblock %}
+
+{% block content %}
+<div class="section">
+    <h2>Datos del Cliente</h2>
+
+    <div class="field-group">
+        <div class="field">
+            <div class="label">Nombre Completo</div>
+            <div class="value">{{ client.full_name }}</div>
+        </div>
+        <div class="field">
+            <div class="label">{{ client.get_document_type_display }}</div>
+            <div class="value">{{ client.document_number }}</div>
+        </div>
+        <div class="field">
+            <div class="label">Email</div>
+            <div class="value">{{ client.email|default:"-" }}</div>
+        </div>
+        <div class="field">
+            <div class="label">Teléfono</div>
+            <div class="value">{{ client.phone|default:"-" }}</div>
+        </div>
+        <div class="field">
+            <div class="label">Nacionalidad</div>
+            <div class="value">{{ client.nationality|default:"-" }}</div>
+        </div>
+        <div class="field">
+            <div class="label">Fecha de Nacimiento</div>
+            <div class="value">{{ client.birth_date|date:"d/m/Y"|default:"-" }}</div>
+        </div>
+    </div>
+
+    <div class="field-group">
+        <div class="field">
+            <div class="label">Dirección</div>
+            <div class="value">{{ client.address|default:"-" }}</div>
+        </div>
+        <div class="field">
+            <div class="label">Ciudad</div>
+            <div class="value">{{ client.city|default:"-" }}</div>
+        </div>
+        <div class="field">
+            <div class="label">Provincia</div>
+            <div class="value">{{ client.province|default:"-" }}</div>
+        </div>
+        <div class="field">
+            <div class="label">País</div>
+            <div class="value">{{ client.country }}</div>
+        </div>
+    </div>
+</div>
+
+{% if processes %}
+<div class="section">
+    <h2>Procesos Asociados</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Expediente</th>
+                <th>Título</th>
+                <th>Tipo</th>
+                <th>Estado</th>
+                <th>Fecha</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for proc in processes %}
+            <tr>
+                <td>{{ proc.file_number }}</td>
+                <td>{{ proc.title }}</td>
+                <td>{{ proc.process_type }}</td>
+                <td>
+                    <span class="badge
+                        {% if proc.status == 'completed' %}badge-completed
+                        {% elif proc.status == 'in_progress' %}badge-progress
+                        {% else %}badge-pending{% endif %}">
+                        {{ proc.get_status_display }}
+                    </span>
+                </td>
+                <td>{{ proc.created_at|date:"d/m/Y" }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+
+{% if client.notes %}
+<div class="section">
+    <h2>Notas</h2>
+    <div class="value">{{ client.notes }}</div>
+</div>
+{% endif %}
+{% endblock %}

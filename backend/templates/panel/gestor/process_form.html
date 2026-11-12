@@ -1,0 +1,109 @@
+{% extends "base_panel.html" %}
+
+{% block title %}{{ title }} — KAIROS{% endblock %}
+
+{% block sidebar_menu %}
+    <div class="nav-section">Principal</div>
+    <a class="nav-link" href="{% url 'panel:home' %}">
+        <span class="icon">📊</span> Resumen
+    </a>
+
+    <div class="nav-section">Gestión</div>
+    <a class="nav-link" href="{% url 'panel:gestor_clients' %}">
+        <span class="icon">👥</span> Clientes
+    </a>
+    <a class="nav-link active" href="{% url 'panel:gestor_processes' %}">
+        <span class="icon">📋</span> Gestiones
+    </a>
+    <a class="nav-link" href="{% url 'panel:gestor_templates' %}">
+        <span class="icon">📝</span> Procesos
+    </a>
+    <a class="nav-link" href="{% url 'panel:gestor_document_generation' %}">
+        <span class="icon">📄</span> Documentos
+    </a>
+
+    {% if user.is_staff %}
+    <div class="nav-section">Sistema</div>
+    <a class="nav-link" href="{% url 'admin:index' %}">
+        <span class="icon">⚙️</span> Admin Django
+    </a>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>{{ title }}</h1>
+    {% if process %}
+    <p class="subtitle">{{ process.file_number }}</p>
+    {% endif %}
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+
+            {% for field in form.hidden_fields %}{{ field }}{% endfor %}
+
+            {# ── Datos del Proceso ── #}
+            <h6 class="form-section-title mt-3">Datos del Proceso</h6>
+            <div class="row g-3">
+                {% with f=form.title %}{% include "panel/gestor/_field_col.html" %}{% endwith %}
+                {% with f=form.process_type %}{% include "panel/gestor/_field_col.html" %}{% endwith %}
+                {% with f=form.client %}{% include "panel/gestor/_field_col.html" %}{% endwith %}
+            </div>
+            <div class="row g-3 mt-0">
+                {% with f=form.description %}{% include "panel/gestor/_field_col_full.html" %}{% endwith %}
+            </div>
+
+            {# ── Plantilla (opcional) ── #}
+            <h6 class="form-section-title mt-4">Plantilla</h6>
+            <div class="row g-3">
+                {% with f=form.template %}{% include "panel/gestor/_field_col.html" %}{% endwith %}
+            </div>
+
+            {# ── Estado y Prioridad ── #}
+            <h6 class="form-section-title mt-4">Estado</h6>
+            <div class="row g-3">
+                {% with f=form.status %}{% include "panel/gestor/_field_col.html" %}{% endwith %}
+                {% with f=form.priority %}{% include "panel/gestor/_field_col.html" %}{% endwith %}
+            </div>
+
+            {# ── Asignaciones ── #}
+            <h6 class="form-section-title mt-4">Asignaciones</h6>
+            <div class="row g-3">
+                {% with f=form.gestor %}{% include "panel/gestor/_field_col.html" %}{% endwith %}
+                {% with f=form.operator %}{% include "panel/gestor/_field_col.html" %}{% endwith %}
+            </div>
+
+            {# ── Fechas ── #}
+            <h6 class="form-section-title mt-4">Fechas</h6>
+            <div class="row g-3">
+                {% with f=form.start_date %}{% include "panel/gestor/_field_col.html" %}{% endwith %}
+                {% with f=form.due_date %}{% include "panel/gestor/_field_col.html" %}{% endwith %}
+                {% with f=form.submission_date %}{% include "panel/gestor/_field_col.html" %}{% endwith %}
+            </div>
+            <div class="row g-3 mt-0">
+                {% with f=form.completion_date %}{% include "panel/gestor/_field_col.html" %}{% endwith %}
+            </div>
+
+            {# ── Notas ── #}
+            <h6 class="form-section-title mt-4">Notas</h6>
+            <div class="row g-3">
+                {% with f=form.notes %}{% include "panel/gestor/_field_col_full.html" %}{% endwith %}
+            </div>
+            <div class="row g-3 mt-0">
+                {% with f=form.external_reference %}{% include "panel/gestor/_field_col.html" %}{% endwith %}
+            </div>
+
+            {# ── Actions ── #}
+            <div class="d-flex gap-2 mt-4 pt-3 border-top">
+                <button type="submit" class="btn btn-primary">
+                    {% if process %}Guardar Cambios{% else %}Crear Proceso{% endif %}
+                </button>
+                <a href="{% url 'panel:gestor_processes' %}" class="btn btn-outline-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

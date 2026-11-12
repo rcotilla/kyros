@@ -1,0 +1,92 @@
+{% extends "panel/base_panel.html" %}
+
+{% block title %}Operador - Inicio{% endblock %}
+
+{% block sidebar_menu %}
+    <a class="nav-link active" href="{% url 'panel:operator_home' %}">
+        <span class="icon">📊</span> Mis Tareas
+    </a>
+    <a class="nav-link" href="{% url 'panel:operator_document_upload' %}">
+        <span class="icon">📄</span> Subir Documento
+    </a>
+{% endblock %}
+
+{% block main_content %}
+<div class="page-header">
+    <h1>Mis Tareas</h1>
+    <p class="subtitle">Operador: {{ user.get_full_name|default:user.username }}</p>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-value">{{ pending_count }}</div>
+            <div class="stat-label">Pendientes</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-value">{{ in_progress_count }}</div>
+            <div class="stat-label">En Progreso</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-value">{{ completed_count }}</div>
+            <div class="stat-label">Completadas</div>
+        </div>
+    </div>
+</div>
+
+<!-- Pending Tasks -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h5>Tareas Pendientes</h5>
+    </div>
+    <div class="card-body">
+        {% if pending_tasks %}
+        <div class="list-group list-group-flush">
+            {% for task in pending_tasks %}
+            <a href="{% url 'panel:operator_task_detail' pk=task.pk %}" class="list-group-item list-group-item-action">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="mb-1">{{ task.title }}</h6>
+                        <small class="text-muted">{{ task.process.file_number }} - {{ task.process.client }}</small>
+                    </div>
+                    <span class="badge bg-warning">Pendiente</span>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-muted text-center py-3">No hay tareas pendientes</p>
+        {% endif %}
+    </div>
+</div>
+
+<!-- In Progress Tasks -->
+<div class="card">
+    <div class="card-header">
+        <h5>En Progreso</h5>
+    </div>
+    <div class="card-body">
+        {% if in_progress_tasks %}
+        <div class="list-group list-group-flush">
+            {% for task in in_progress_tasks %}
+            <a href="{% url 'panel:operator_task_detail' pk=task.pk %}" class="list-group-item list-group-item-action">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="mb-1">{{ task.title }}</h6>
+                        <small class="text-muted">{{ task.process.file_number }} - {{ task.process.client }}</small>
+                    </div>
+                    <span class="badge bg-info">En Progreso</span>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-muted text-center py-3">No hay tareas en progreso</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

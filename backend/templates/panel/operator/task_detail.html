@@ -1,0 +1,61 @@
+{% extends "panel/base_panel.html" %}
+
+{% block title %}Tarea - {{ task.title }}{% endblock %}
+
+{% block sidebar_menu %}
+    <a class="nav-link active" href="{% url 'panel:operator_home' %}">
+        <span class="icon">📊</span> Mis Tareas
+    </a>
+    <a class="nav-link" href="{% url 'panel:operator_document_upload' %}">
+        <span class="icon">📄</span> Subir Documento
+    </a>
+{% endblock %}
+
+{% block main_content %}
+<div class="page-header">
+    <h1>{{ task.title }}</h1>
+    <p class="subtitle">{{ task.process.file_number }} - {{ task.process.client }}</p>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-header">Detalles de la Tarea</div>
+            <div class="card-body">
+                <table class="table">
+                    <tr><th>Descripción</th><td>{{ task.description|default:"Sin descripción" }}</td></tr>
+                    <tr><th>Estado</th><td><span class="badge bg-{% if task.status == 'completed' %}success{% elif task.status == 'in_progress' %}info{% elif task.status == 'pending' %}warning{% else %}secondary{% endif %}">{{ task.get_status_display }}</span></td></tr>
+                    <tr><th>Prioridad</th><td><span class="badge bg-{% if task.priority == 'high' %}danger{% elif task.priority == 'medium' %}warning{% else %}secondary{% endif %}">{{ task.get_priority_display }}</span></td></tr>
+                    <tr><th>Fecha Límite</th><td>{{ task.due_date|date:"d/m/Y"|default:"Sin fecha" }}</td></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-header">Acciones</div>
+            <div class="card-body">
+                <a href="{% url 'panel:operator_task_update' pk=task.pk %}" class="btn btn-primary w-100 mb-2">Actualizar Estado</a>
+                <a href="{% url 'panel:operator_document_upload' %}?task={{ task.pk }}" class="btn btn-outline-primary w-100">Subir Documento</a>
+            </div>
+        </div>
+        
+        {% if documents %}
+        <div class="card">
+            <div class="card-header">Documentos</div>
+            <div class="card-body">
+                <ul class="list-unstyled">
+                    {% for doc in documents %}
+                    <li class="mb-2">
+                        <a href="{{ doc.file.url }}" target="_blank">{{ doc.title }}</a>
+                        <br><small class="text-muted">{{ doc.uploaded_at|date:"d/m/Y" }}</small>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

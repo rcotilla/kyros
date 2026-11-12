@@ -1,0 +1,83 @@
+{% extends "base_panel.html" %}
+
+{% block title %}Procesos (Plantillas) — KAIROS{% endblock %}
+
+{% block sidebar_menu %}
+    <div class="nav-section">Principal</div>
+    <a class="nav-link" href="{% url 'panel:home' %}">
+        <span class="icon">📊</span> Resumen
+    </a>
+
+    <div class="nav-section">Gestión</div>
+    <a class="nav-link" href="{% url 'panel:gestor_clients' %}">
+        <span class="icon">👥</span> Clientes
+    </a>
+    <a class="nav-link" href="{% url 'panel:gestor_processes' %}">
+        <span class="icon">📋</span> Gestiones
+    </a>
+    <a class="nav-link active" href="{% url 'panel:gestor_templates' %}">
+        <span class="icon">📝</span> Procesos
+    <a class="nav-link" href="{% url 'panel:gestor_document_generation' %}">
+        <span class="icon">📄</span> Documentos
+    </a>
+    </a>
+
+    {% if user.is_staff %}
+    <div class="nav-section">Sistema</div>
+    <a class="nav-link" href="{% url 'admin:index' %}">
+        <span class="icon">⚙️</span> Admin Django
+    </a>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-center">
+    <div>
+        <h1>Procesos (Plantillas)</h1>
+        <p class="subtitle">{{ total }} plantillas configuradas</p>
+    </div>
+    <a href="{% url 'panel:gestor_template_create' %}" class="btn btn-primary">+ Nueva Plantilla</a>
+</div>
+
+<div class="card">
+    <div class="card-body p-0">
+        {% if templates %}
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Tipo de Proceso</th>
+                        <th>Pasos</th>
+                        <th>Estado</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for tpl in templates %}
+                    <tr>
+                        <td><strong>{{ tpl.name }}</strong></td>
+                        <td>{{ tpl.process_type|default:"—" }}</td>
+                        <td><span class="badge bg-info">{{ tpl.template_steps.count }}</span></td>
+                        <td>
+                            <span class="badge bg-{% if tpl.is_active %}success{% else %}secondary{% endif %}">
+                                {% if tpl.is_active %}Activa{% else %}Inactiva{% endif %}
+                            </span>
+                        </td>
+                        <td>
+                            <a href="{% url 'panel:gestor_template_detail' pk=tpl.pk %}" class="btn btn-sm btn-outline-primary">Ver</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+            <p class="text-muted mb-3">No hay plantillas creadas.</p>
+            <a href="{% url 'panel:gestor_template_create' %}" class="btn btn-primary">Crear primera plantilla</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

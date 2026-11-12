@@ -1,0 +1,69 @@
+{% extends "base_panel.html" %}
+
+{% block title %}{{ title }} — KAIROS{% endblock %}
+
+{% block sidebar_menu %}
+    <div class="nav-section">Principal</div>
+    <a class="nav-link" href="{% url 'panel:home' %}">
+        <span class="icon">📊</span> Resumen
+    </a>
+
+    <div class="nav-section">Gestión</div>
+    <a class="nav-link" href="{% url 'panel:gestor_clients' %}">
+        <span class="icon">👥</span> Clientes
+    </a>
+    <a class="nav-link" href="{% url 'panel:gestor_processes' %}">
+        <span class="icon">📋</span> Gestiones
+    </a>
+    <a class="nav-link active" href="{% url 'panel:gestor_templates' %}">
+        <span class="icon">📝</span> Procesos
+    </a>
+    <a class="nav-link" href="{% url 'panel:gestor_document_generation' %}">
+        <span class="icon">📄</span> Documentos
+    </a>
+
+    {% if user.is_staff %}
+    <div class="nav-section">Sistema</div>
+    <a class="nav-link" href="{% url 'admin:index' %}">
+        <span class="icon">⚙️</span> Admin Django
+    </a>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>{{ title }}</h1>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+
+            {% for field in form.hidden_fields %}{{ field }}{% endfor %}
+
+            {# ── Datos de la Plantilla ── #}
+            <h6 class="form-section-title mt-3">Datos de la Plantilla</h6>
+            <div class="row g-3">
+                {% with f=form.name %}{% include "panel/gestor/_field_col.html" %}{% endwith %}
+                {% with f=form.process_type %}{% include "panel/gestor/_field_col.html" %}{% endwith %}
+                {% with f=form.is_active %}{% include "panel/gestor/_field_col_check.html" %}{% endwith %}
+            </div>
+
+            {# ── Descripción ── #}
+            <h6 class="form-section-title mt-4">Descripción</h6>
+            <div class="row g-3">
+                {% with f=form.description %}{% include "panel/gestor/_field_col_full.html" %}{% endwith %}
+            </div>
+
+            {# ── Actions ── #}
+            <div class="d-flex gap-2 mt-4 pt-3 border-top">
+                <button type="submit" class="btn btn-primary">
+                    {% if template %}Guardar Cambios{% else %}Crear Plantilla{% endif %}
+                </button>
+                <a href="{% url 'panel:gestor_templates' %}" class="btn btn-outline-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

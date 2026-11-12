@@ -1,0 +1,14 @@
+{# Renders a checkbox field — Bootstrap 5 form-check style #}
+<div class="col-md-4">
+    <div class="form-check form-switch mt-4">
+        {{ f }}
+        <label class="form-check-label" for="{{ f.id_for_label }}">
+            {{ f.label }}
+        </label>
+    </div>
+    {% if f.errors %}
+    <div class="text-danger small">
+        {% for error in f.errors %}{{ error }}{% endfor %}
+    </div>
+    {% endif %}
+</div>

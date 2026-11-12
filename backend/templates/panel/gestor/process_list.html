@@ -1,0 +1,137 @@
+{% extends "base_panel.html" %}
+
+{% block title %}Gestiones — KAIROS{% endblock %}
+
+{% block sidebar_menu %}
+    <div class="nav-section">Principal</div>
+    <a class="nav-link" href="{% url 'panel:home' %}">
+        <span class="icon">📊</span> Resumen
+    </a>
+
+    <div class="nav-section">Gestión</div>
+    <a class="nav-link" href="{% url 'panel:gestor_clients' %}">
+        <span class="icon">👥</span> Clientes
+    </a>
+    <a class="nav-link active" href="{% url 'panel:gestor_processes' %}">
+        <span class="icon">📋</span> Gestiones
+    </a>
+    <a class="nav-link" href="{% url 'panel:gestor_templates' %}">
+        <span class="icon">📝</span> Procesos
+    </a>
+    <a class="nav-link" href="{% url 'panel:gestor_document_generation' %}">
+        <span class="icon">📄</span> Documentos
+    </a>
+
+    {% if user.is_staff %}
+    <div class="nav-section">Sistema</div>
+    <a class="nav-link" href="{% url 'admin:index' %}">
+        <span class="icon">⚙️</span> Admin Django
+    </a>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-center">
+    <div>
+        <h1>Gestiones</h1>
+        <p class="subtitle">{{ total }} gestiones registradas</p>
+    </div>
+    <a href="{% url 'panel:gestor_process_create' %}" class="btn btn-primary">+ Nuevo Proceso</a>
+</div>
+
+<!-- Filters -->
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-2 align-items-end">
+            <div class="col-md-4">
+                <input type="text" class="form-control" name="search" value="{{ filter_form.search.value|default:'' }}"
+                       placeholder="Buscar expediente, título, cliente...">
+            </div>
+            <div class="col-md-2">
+                <select class="form-select" name="status">
+                    <option value="">Todos los estados</option>
+                    {% for value, label in filter_form.status.field.choices %}
+                    {% if value %}
+                    <option value="{{ value }}" {% if filter_form.status.value == value %}selected{% endif %}>{{ label }}</option>
+                    {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <select class="form-select" name="priority">
+                    <option value="">Todas las prioridades</option>
+                    {% for value, label in filter_form.priority.field.choices %}
+                    {% if value %}
+                    <option value="{{ value }}" {% if filter_form.priority.value == value %}selected{% endif %}>{{ label }}</option>
+                    {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-outline-primary">Filtrar</button>
+                <a href="{% url 'panel:gestor_processes' %}" class="btn btn-outline-secondary">Limpiar</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Process List -->
+<div class="card">
+    <div class="card-body p-0">
+        {% if processes %}
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Expediente</th>
+                        <th>Título</th>
+                        <th>Cliente</th>
+                        <th>Tipo</th>
+                        <th>Estado</th>
+                        <th>Prioridad</th>
+                        <th>Vencimiento</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in processes %}
+                    <tr>
+                        <td><strong>{{ p.file_number }}</strong></td>
+                        <td>{{ p.title|truncatechars:35 }}</td>
+                        <td><a href="{% url 'panel:gestor_client_detail' pk=p.client.pk %}">{{ p.client.full_name }}</a></td>
+                        <td><small>{{ p.process_type.name }}</small></td>
+                        <td>
+                            <span class="badge bg-{% if p.status == 'completed' %}success{% elif p.status == 'in_progress' %}warning{% elif p.status == 'rejected' %}danger{% else %}secondary{% endif %} badge-status">
+                                {{ p.get_status_display }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="badge bg-{% if p.priority == 'urgent' %}danger{% elif p.priority == 'high' %}warning{% elif p.priority == 'medium' %}info{% else %}secondary{% endif %} badge-status">
+                                {{ p.get_priority_display }}
+                            </span>
+                        </td>
+                        <td>{{ p.due_date|date:"d/m/Y"|default:"-" }}</td>
+                        <td>
+                            <a href="{% url 'panel:gestor_process_detail' pk=p.pk %}" class="btn btn-sm btn-outline-primary">Ver</a>
+                            <form method="post" action="{% url 'panel:gestor_process_delete' pk=p.pk %}" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-outline-danger"
+                                        onclick="return confirm('¿Eliminar «{{ p.file_number }}»?')">
+                                    🗑️
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+            <p class="text-muted mb-3">No hay procesos{% if filter_form.search.value %} que coincidan{% endif %}.</p>
+            <a href="{% url 'panel:gestor_process_create' %}" class="btn btn-primary">Crear primer proceso</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

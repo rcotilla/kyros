@@ -1,0 +1,82 @@
+{% extends "panel/base_panel.html" %}
+
+{% block title %}Mis Procesos - KAIROS{% endblock %}
+
+{% block sidebar_menu %}
+    <a class="nav-link active" href="{% url 'panel:client_home' %}">
+        <span class="icon">📋</span> Mis Procesos
+    </a>
+    <a class="nav-link" href="{% url 'panel:client_profile' %}">
+        <span class="icon">👤</span> Mi Perfil
+    </a>
+{% endblock %}
+
+{% block main_content %}
+<div class="page-header">
+    <h1>Mis Procesos</h1>
+    <p class="subtitle">Bienvenido, {{ user.get_full_name|default:user.username }}</p>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-value">{{ total }}</div>
+            <div class="stat-label">Total</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-value">{{ active_count }}</div>
+            <div class="stat-label">Activos</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-value">{{ completed_count }}</div>
+            <div class="stat-label">Completados</div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h5>Todos mis Procesos</h5>
+    </div>
+    <div class="card-body">
+        {% if processes %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Expediente</th>
+                        <th>Tipo</th>
+                        <th>Estado</th>
+                        <th>Fecha Inicio</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for process in processes %}
+                    <tr>
+                        <td><strong>{{ process.file_number }}</strong></td>
+                        <td>{{ process.process_type }}</td>
+                        <td>
+                            <span class="badge bg-{% if process.status == 'completed' %}success{% elif process.status == 'in_progress' %}info{% elif process.status == 'pending' %}warning{% else %}secondary{% endif %}">
+                                {{ process.get_status_display }}
+                            </span>
+                        </td>
+                        <td>{{ process.start_date|date:"d/m/Y"|default:"-" }}</td>
+                        <td>
+                            <a href="{% url 'panel:client_process_detail' pk=process.pk %}" class="btn btn-sm btn-outline-primary">Ver Detalle</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-muted text-center py-4">No tiene procesos registrados.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

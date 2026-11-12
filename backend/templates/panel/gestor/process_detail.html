@@ -1,0 +1,214 @@
+{% extends "base_panel.html" %}
+
+{% block title %}[{{ process.file_number }}] {{ process.title }} — KAIROS{% endblock %}
+
+{% block sidebar_menu %}
+    <div class="nav-section">Principal</div>
+    <a class="nav-link" href="{% url 'panel:home' %}">
+        <span class="icon">📊</span> Resumen
+    </a>
+
+    <div class="nav-section">Gestión</div>
+    <a class="nav-link" href="{% url 'panel:gestor_clients' %}">
+        <span class="icon">👥</span> Clientes
+    </a>
+    <a class="nav-link active" href="{% url 'panel:gestor_processes' %}">
+        <span class="icon">📋</span> Gestiones
+    </a>
+    <a class="nav-link" href="{% url 'panel:gestor_templates' %}">
+        <span class="icon">📝</span> Procesos
+    </a>
+    <a class="nav-link" href="{% url 'panel:gestor_document_generation' %}">
+        <span class="icon">📄</span> Documentos
+    </a>
+
+    {% if user.is_staff %}
+    <div class="nav-section">Sistema</div>
+    <a class="nav-link" href="{% url 'admin:index' %}">
+        <span class="icon">⚙️</span> Admin Django
+    </a>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-center">
+    <div>
+        <h1>[{{ process.file_number }}] {{ process.title }}</h1>
+        <p class="subtitle">
+            {{ process.process_type }} — Cliente:
+            <a href="{% url 'panel:gestor_client_detail' pk=process.client.pk %}">{{ process.client.full_name }}</a>
+        </p>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="{% url 'panel:gestor_process_edit' pk=process.pk %}" class="btn btn-outline-secondary">✏️ Editar</a>
+        <form method="post" action="{% url 'panel:gestor_process_delete' pk=process.pk %}" class="d-inline">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-outline-danger"
+                    onclick="return confirm('¿Eliminar el proceso «{{ process.file_number }}»? Se eliminarán todos sus pasos y documentos.')">
+                🗑️ Eliminar
+            </button>
+        </form>
+        <a href="{% url 'panel:gestor_processes' %}" class="btn btn-outline-secondary">← Volver</a>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Process Info -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">Información del Proceso</div>
+            <div class="card-body">
+                <table class="table table-sm mb-0">
+                    <tr><th>Estado</th><td>
+                        <span class="badge bg-{% if process.status == 'completed' %}success{% elif process.status == 'in_progress' %}warning{% elif process.status == 'rejected' %}danger{% else %}secondary{% endif %}">
+                            {{ process.get_status_display }}
+                        </span>
+                    </td></tr>
+                    <tr><th>Prioridad</th><td>{{ process.get_priority_display }}</td></tr>
+                    <tr><th>Gestor</th><td>{{ process.gestor.get_full_name|default:"Sin asignar" }}</td></tr>
+                    <tr><th>Operador</th><td>{{ process.operator.get_full_name|default:"Sin asignar" }}</td></tr>
+                    <tr><th>Fecha Inicio</th><td>{{ process.start_date|date:"d/m/Y"|default:"-" }}</td></tr>
+                    <tr><th>Vencimiento</th><td>{{ process.due_date|date:"d/m/Y"|default:"-" }}</td></tr>
+                    <tr><th>Presentación</th><td>{{ process.submission_date|date:"d/m/Y"|default:"-" }}</td></tr>
+                    <tr><th>Finalización</th><td>{{ process.completion_date|date:"d/m/Y"|default:"-" }}</td></tr>
+                    <tr><th>Ref. Externa</th><td>{{ process.external_reference|default:"-" }}</td></tr>
+                </table>
+            </div>
+        </div>
+
+        {% if process.description %}
+        <div class="card mt-4">
+            <div class="card-header">Descripción</div>
+            <div class="card-body">{{ process.description }}</div>
+        </div>
+        {% endif %}
+
+        {% if process.notes %}
+        <div class="card mt-4">
+            <div class="card-header">Notas Internas</div>
+            <div class="card-body">{{ process.notes }}</div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Steps -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span>Pasos del Proceso ({{ steps.count }})</span>
+                <button class="btn btn-sm btn-primary" data-bs-toggle="collapse" data-bs-target="#addStepForm">
+                    + Agregar Paso
+                </button>
+            </div>
+
+            <!-- Add Step Form (collapsed) -->
+            <div class="collapse" id="addStepForm">
+                <div class="card-body border-bottom">
+                    <form method="post" action="{% url 'panel:gestor_process_add_step' pk=process.pk %}">
+                        {% csrf_token %}
+                        <div class="row g-2">
+                            <div class="col-md-4">
+                                <input type="text" class="form-control form-control-sm" name="name" placeholder="Nombre del paso" required>
+                            </div>
+                            <div class="col-md-2">
+                                <input type="number" class="form-control form-control-sm" name="order" placeholder="Orden" min="1">
+                            </div>
+                            <div class="col-md-3">
+                                <select class="form-select form-select-sm" name="status">
+                                    {% for value, label in step_form.status.field.choices %}
+                                    <option value="{{ value }}">{{ label }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <button type="submit" class="btn btn-sm btn-primary w-100">Agregar</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card-body p-0">
+                {% if steps %}
+                <form method="post" action="{% url 'panel:gestor_process_steps_update' pk=process.pk %}">
+                    {% csrf_token %}
+                    <div class="list-group list-group-flush">
+                        {% for step in steps %}
+                        <div class="list-group-item">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="flex-grow-1">
+                                    <strong>{{ step.order }}.</strong> {{ step.name }}
+                                    {% if step.description %}
+                                    <br><small class="text-muted">{{ step.description|truncatechars:80 }}</small>
+                                    {% endif %}
+                                    {% if step.assigned_to %}
+                                    <br><small class="text-muted">👤 {{ step.assigned_to.get_full_name }}</small>
+                                    {% endif %}
+                                </div>
+                                <div class="d-flex align-items-center gap-2 ms-3">
+                                    <select name="status_{{ step.pk }}" class="form-select form-select-sm" style="width: 140px;">
+                                        {% for value, label in step_status_choices %}
+                                        <option value="{{ value }}" {% if step.status == value %}selected{% endif %}>{{ label }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <div class="form-check form-switch" title="Eliminar este paso">
+                                        <input class="form-check-input" type="checkbox" name="delete" value="{{ step.pk }}" id="delete_{{ step.pk }}">
+                                        <label class="form-check-label text-danger" for="delete_{{ step.pk }}">🗑️</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <div class="card-body border-top">
+                        <button type="submit" class="btn btn-primary btn-sm" onclick="return confirm('¿Guardar cambios en los pasos?')">
+                            💾 Guardar Cambios
+                        </button>
+                    </div>
+                </form>
+                {% else %}
+                <div class="text-center py-4">
+                    <p class="text-muted">Sin pasos definidos</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Documents -->
+        <div class="card mt-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span>Documentos ({{ documents.count }})</span>
+                <a href="{% url 'panel:gestor_document_upload' %}?process={{ process.pk }}" class="btn btn-sm btn-primary">+</a>
+            </div>
+            <div class="card-body p-0">
+                {% if documents %}
+                <div class="list-group list-group-flush">
+                    {% for doc in documents %}
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>{{ doc.title }}</strong><br>
+                            <small class="text-muted">{{ doc.get_doc_type_display }} — {{ doc.uploaded_at|date:"d/m/Y" }}</small>
+                        </div>
+                        <div class="d-flex gap-1">
+                            <a href="{{ doc.file.url }}" class="btn btn-sm btn-outline-primary" target="_blank">Ver</a>
+                            <form method="post" action="{% url 'panel:gestor_document_delete' pk=doc.pk %}" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-outline-danger"
+                                        onclick="return confirm('¿Eliminar el documento «{{ doc.title }}»? Esta acción no se puede deshacer.')">
+                                    🗑️
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <p class="text-muted">Sin documentos</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

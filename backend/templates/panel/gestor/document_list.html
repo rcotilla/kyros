@@ -1,0 +1,109 @@
+{% extends "base_panel.html" %}
+
+{% block title %}Documentos — KAIROS{% endblock %}
+
+{% block sidebar_menu %}
+    <div class="nav-section">Principal</div>
+    <a class="nav-link" href="{% url 'panel:home' %}">
+        <span class="icon">📊</span> Resumen
+    </a>
+
+    <div class="nav-section">Gestión</div>
+    <a class="nav-link" href="{% url 'panel:gestor_clients' %}">
+        <span class="icon">👥</span> Clientes
+    </a>
+    <a class="nav-link" href="{% url 'panel:gestor_processes' %}">
+        <span class="icon">📋</span> Gestiones
+    </a>
+    <a class="nav-link active" href="{% url 'panel:gestor_documents' %}">
+        <span class="icon">📝</span> Procesos
+    <a class="nav-link" href="{% url 'panel:gestor_document_generation' %}">
+        <span class="icon">📄</span> Documentos
+    </a>
+    </a>
+
+    {% if user.is_staff %}
+    <div class="nav-section">Sistema</div>
+    <a class="nav-link" href="{% url 'admin:index' %}">
+        <span class="icon">⚙️</span> Admin Django
+    </a>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-center">
+    <div>
+        <h1>Documentos</h1>
+        <p class="subtitle">{{ total }} documentos</p>
+    </div>
+    <a href="{% url 'panel:gestor_document_upload' %}" class="btn btn-primary">+ Subir Documento</a>
+</div>
+
+<!-- Search -->
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-2">
+            <div class="col">
+                <input type="text" class="form-control" name="search" value="{{ search }}"
+                       placeholder="Buscar por título, cliente, expediente...">
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-outline-primary">Buscar</button>
+                {% if search %}
+                <a href="{% url 'panel:gestor_documents' %}" class="btn btn-outline-secondary">Limpiar</a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Document List -->
+<div class="card">
+    <div class="card-body p-0">
+        {% if documents %}
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Título</th>
+                        <th>Tipo</th>
+                        <th>Cliente</th>
+                        <th>Proceso</th>
+                        <th>Subido</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for doc in documents %}
+                    <tr>
+                        <td><strong>{{ doc.title }}</strong></td>
+                        <td><span class="badge bg-light text-dark">{{ doc.get_doc_type_display }}</span></td>
+                        <td>{{ doc.client.full_name|default:"-" }}</td>
+                        <td>{{ doc.process.file_number|default:"-" }}</td>
+                        <td>{{ doc.uploaded_at|date:"d/m/Y" }}</td>
+                        <td>
+                            <div class="d-flex gap-1">
+                                <a href="{{ doc.file.url }}" class="btn btn-sm btn-outline-primary" target="_blank">Ver</a>
+                                <form method="post" action="{% url 'panel:gestor_document_delete' pk=doc.pk %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-outline-danger"
+                                            onclick="return confirm('¿Eliminar el documento «{{ doc.title }}»? Esta acción no se puede deshacer.')">
+                                        🗑️
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+            <p class="text-muted mb-3">No hay documentos{% if search %} que coincidan{% endif %}.</p>
+            <a href="{% url 'panel:gestor_document_upload' %}" class="btn btn-primary">Subir primer documento</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

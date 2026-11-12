@@ -1,0 +1,87 @@
+{% extends "base_panel.html" %}
+
+{% block title %}Generar Documentos — KAIROS{% endblock %}
+
+{% block sidebar_menu %}
+    <div class="nav-section">Principal</div>
+    <a class="nav-link" href="{% url 'panel:home' %}">
+        <span class="icon">📊</span> Resumen
+    </a>
+
+    <div class="nav-section">Gestión</div>
+    <a class="nav-link" href="{% url 'panel:gestor_clients' %}">
+        <span class="icon">👥</span> Clientes
+    </a>
+    <a class="nav-link" href="{% url 'panel:gestor_processes' %}">
+        <span class="icon">📋</span> Gestiones
+    </a>
+    <a class="nav-link" href="{% url 'panel:gestor_templates' %}">
+        <span class="icon">📝</span> Procesos
+    </a>
+    <a class="nav-link active" href="{% url 'panel:gestor_document_generation' %}">
+        <span class="icon">📄</span> Documentos
+    </a>
+
+    {% if user.is_staff %}
+    <div class="nav-section">Sistema</div>
+    <a class="nav-link" href="{% url 'admin:index' %}">
+        <span class="icon">⚙️</span> Admin Django
+    </a>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>📄 Generar Documentos</h1>
+    <p class="subtitle">Contratos, cartas, poderes y documentos similares</p>
+</div>
+
+<!-- Placeholder — to be expanded with document generation tools -->
+<div class="row g-4">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">Tipo de Documento</div>
+            <div class="card-body">
+                <div class="list-group list-group-flush">
+                    <div class="list-group-item list-group-item-action" style="cursor: default;">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>📝 Contrato de Prestación de Servicios</strong>
+                                <br><small class="text-muted">Acuerdo legal entre gestor y cliente</small>
+                            </div>
+                            <span class="badge bg-secondary">Próximamente</span>
+                        </div>
+                    </div>
+                    <div class="list-group-item list-group-item-action" style="cursor: default;">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>📝 Poder Notarial</strong>
+                                <br><small class="text-muted">Autorización para actuar en nombre del cliente</small>
+                            </div>
+                            <span class="badge bg-secondary">Próximamente</span>
+                        </div>
+                    </div>
+                    <div class="list-group-item list-group-item-action" style="cursor: default;">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>📝 Carta de Representación</strong>
+                                <br><small class="text-muted">Carta de presentación ante organismos</small>
+                            </div>
+                            <span class="badge bg-secondary">Próximamente</span>
+                        </div>
+                    </div>
+                    <div class="list-group-item list-group-item-action" style="cursor: default;">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>📝 Consentimiento Informado</strong>
+                                <br><small class="text-muted">Autorización del cliente para trámites específicos</small>
+                            </div>
+                            <span class="badge bg-secondary">Próximamente</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

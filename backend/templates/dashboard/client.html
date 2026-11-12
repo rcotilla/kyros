@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Mi Panel — KAIROS{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row mb-4">
+        <div class="col">
+            <h1>Mi Panel</h1>
+            <p class="text-muted">Bienvenido, {{ user.get_full_name|default:user.username }}</p>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <h3 style="font-size: 2.5em;">📋</h3>
+                    <h5 class="card-title">Mis Procesos</h5>
+                    <p class="card-text">Seguimiento de tus trámites en curso.</p>
+                    <a href="/api/v1/processes/" class="btn btn-primary">Ver Mis Procesos</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <h3 style="font-size: 2.5em;">📄</h3>
+                    <h5 class="card-title">Mis Documentos</h5>
+                    <p class="card-text">Acceder a la documentación de tus procesos.</p>
+                    <a href="/api/v1/documents/" class="btn btn-primary">Ver Documentos</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,134 @@
+{% extends "pdf/base.html" %}
+
+{% block pdf_title %}Expediente {{ process.file_number }} — KAIROS{% endblock %}
+
+{% block content %}
+<div class="section">
+    <h2>Expediente {{ process.file_number }}</h2>
+
+    <div class="field-group">
+        <div class="field">
+            <div class="label">Título</div>
+            <div class="value">{{ process.title }}</div>
+        </div>
+        <div class="field">
+            <div class="label">Tipo de Proceso</div>
+            <div class="value">{{ process_type }}</div>
+        </div>
+        <div class="field">
+            <div class="label">Estado</div>
+            <div class="value">
+                <span class="badge badge-progress">{{ process.get_status_display }}</span>
+            </div>
+        </div>
+        <div class="field">
+            <div class="label">Prioridad</div>
+            <div class="value">{{ process.get_priority_display }}</div>
+        </div>
+    </div>
+
+    {% if process.description %}
+    <div class="field">
+        <div class="label">Descripción</div>
+        <div class="value">{{ process.description }}</div>
+    </div>
+    {% endif %}
+</div>
+
+<div class="section">
+    <h2>Datos del Cliente</h2>
+
+    <div class="field-group">
+        <div class="field">
+            <div class="label">Nombre Completo</div>
+            <div class="value">{{ client.full_name }}</div>
+        </div>
+        <div class="field">
+            <div class="label">{{ client.get_document_type_display }}</div>
+            <div class="value">{{ client.document_number }}</div>
+        </div>
+        <div class="field">
+            <div class="label">Email</div>
+            <div class="value">{{ client.email|default:"-" }}</div>
+        </div>
+        <div class="field">
+            <div class="label">Teléfono</div>
+            <div class="value">{{ client.phone|default:"-" }}</div>
+        </div>
+        <div class="field">
+            <div class="label">Nacionalidad</div>
+            <div class="value">{{ client.nationality|default:"-" }}</div>
+        </div>
+        <div class="field">
+            <div class="label">Domicilio</div>
+            <div class="value">{{ client.address|default:"-" }}</div>
+        </div>
+    </div>
+</div>
+
+{% if steps %}
+<div class="section">
+    <h2>Pasos del Proceso</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Paso</th>
+                <th>Estado</th>
+                <th>Asignado a</th>
+                <th>Vencimiento</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for step in steps %}
+            <tr>
+                <td>{{ step.order }}</td>
+                <td>{{ step.name }}</td>
+                <td>
+                    <span class="badge
+                        {% if step.status == 'completed' %}badge-completed
+                        {% elif step.status == 'in_progress' %}badge-progress
+                        {% else %}badge-pending{% endif %}">
+                        {{ step.get_status_display }}
+                    </span>
+                </td>
+                <td>{{ step.assigned_to.get_full_name|default:"-" }}</td>
+                <td>{{ step.due_date|date:"d/m/Y"|default:"-" }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+
+<div class="section">
+    <h2>Información de Gestión</h2>
+
+    <div class="field-group">
+        <div class="field">
+            <div class="label">Gestor Asignado</div>
+            <div class="value">{{ gestor.get_full_name|default:"Sin asignar" }}</div>
+        </div>
+        <div class="field">
+            <div class="label">Fecha de Inicio</div>
+            <div class="value">{{ process.start_date|date:"d/m/Y"|default:"-" }}</div>
+        </div>
+        <div class="field">
+            <div class="label">Fecha de Vencimiento</div>
+            <div class="value">{{ process.due_date|date:"d/m/Y"|default:"-" }}</div>
+        </div>
+        <div class="field">
+            <div class="label">Referencia Externa</div>
+            <div class="value">{{ process.external_reference|default:"-" }}</div>
+        </div>
+    </div>
+
+    {% if process.notes %}
+    <div class="field">
+        <div class="label">Notas Internas</div>
+        <div class="value">{{ process.notes }}</div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
